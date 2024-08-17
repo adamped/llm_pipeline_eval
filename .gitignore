@@ -1,0 +1,13 @@
+# Rust
+
+/lib/target/
+*.lock
+
+# CSharp
+
+obj/
+bin/
+
+# Common
+
+*.txt
