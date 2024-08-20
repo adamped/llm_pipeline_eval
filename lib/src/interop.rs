@@ -1,4 +1,7 @@
-use std::ffi::{c_char, CString};
+use std::{
+    ffi::{c_char, CString},
+    mem,
+};
 
 use interoptopus::{
     ffi_function, ffi_type, function, patterns::slice::FFISlice, Inventory, InventoryBuilder,
@@ -22,6 +25,17 @@ impl EvalRunnerHandle<'_> {
 
 #[ffi_function]
 #[no_mangle]
+pub extern "C" fn test(handle: EvalRunnerHandle) -> FFISlice<f32> {
+    let runner = unsafe { &mut *(handle.instance) };
+    let vec = runner.test();
+
+    let slice = unsafe { std::slice::from_raw_parts(vec.as_ptr(), vec.len()) };
+    mem::forget(vec);
+    FFISlice::from_slice(slice)
+}
+
+#[ffi_function]
+#[no_mangle]
 pub extern "C" fn init(
     bert_callback: extern "C" fn(input: *const c_char) -> *const FFISlice<'static, f32>,
 ) -> EvalRunnerHandle<'static> {
@@ -41,5 +55,6 @@ pub extern "C" fn init(
 pub fn create_inventory() -> Inventory {
     InventoryBuilder::new()
         .register(function!(init))
+        .register(function!(test))
         .inventory()
 }

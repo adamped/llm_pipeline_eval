@@ -22,6 +22,9 @@ namespace LLMPipelineEval
         [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "init")]
         public static extern IntPtr init(InteropDelegate_fn_pconst_i8_rval_pconst_Slicef32 bert_callback);
 
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "test")]
+        public static extern Slicef32 test(IntPtr handle);
+
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
