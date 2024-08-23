@@ -8,6 +8,7 @@ crate-type = ["lib", "cdylib"]
 
 [dependencies]
 interoptopus = "0.14.26"
+edge_vector_index = { path = "../../edge_vector_index/lib", version = "0.1.0" }
 
 [dev-dependencies]
 interoptopus_backend_csharp = "0.14.25"

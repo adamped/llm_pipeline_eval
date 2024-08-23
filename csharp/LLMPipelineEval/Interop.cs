@@ -22,8 +22,8 @@ namespace LLMPipelineEval
         [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "init")]
         public static extern IntPtr init(InteropDelegate_fn_pconst_i8_rval_pconst_Slicef32 bert_callback);
 
-        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "test")]
-        public static extern Slicef32 test(IntPtr handle);
+        [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "similarity")]
+        public static extern Bool similarity(IntPtr handle, ref sbyte input, ref sbyte output, float threshold);
 
     }
 
@@ -86,6 +86,25 @@ namespace LLMPipelineEval
         {
             return this.GetEnumerator();
         }
+    }
+
+
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public partial struct Bool
+    {
+        byte value;
+    }
+
+    public partial struct Bool
+    {
+        public static readonly Bool True = new Bool { value =  1 };
+        public static readonly Bool False = new Bool { value =  0 };
+        public Bool(bool b)
+        {
+            value = (byte) (b ? 1 : 0);
+        }
+        public bool Is => value == 1;
     }
 
 

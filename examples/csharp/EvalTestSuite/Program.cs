@@ -1,31 +1,12 @@
-﻿using System.Runtime.InteropServices;
-using LLMPipelineEval;
+﻿using LLMPipelineEval;
 
 Console.WriteLine("Evaluation Test Suite");
 
-var handle = Interop.init(MyCallbackFunction);
+BertCallback bertCallback = (string text) => [0.1f, 0.2f];
 
-Console.WriteLine(string.Join(",", Interop.test(handle)));
+var runner = new EvalRunner(bertCallback);
 
-// When finished
-Marshal.FreeHGlobal(handle);
-
-static IntPtr MyCallbackFunction(ref sbyte input)
-{
-    unsafe
-    {
-        // Points to a null-terminated string
-        fixed (sbyte* ptr = &input)
-        {
-            string prompt = Marshal.PtrToStringAnsi((IntPtr)ptr)!;
-            var vectors = new float[] { 0.1f, 0.2f, 0.3f };
-
-            var arrayHandle = GCHandle.Alloc(vectors, GCHandleType.Pinned);
-            var data = new Slicef32(arrayHandle, (ulong)vectors.Length);
-
-            return GCHandle.Alloc(data, GCHandleType.Pinned).AddrOfPinnedObject();
-        }
-    }
+Console.WriteLine($"Result: {runner.Similarity("The cat sat on a bench.", "On a bench there sat a cat.")}");
 
 
-}
+
