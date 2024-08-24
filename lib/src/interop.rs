@@ -17,7 +17,7 @@ pub struct EvalRunnerHandle<'a> {
     instance: *mut EvalRunner<'a>,
 }
 
-impl EvalRunnerHandle<'_> {
+impl<'a> EvalRunnerHandle<'a> {
     fn out_of_rust(value: EvalRunner) -> EvalRunnerHandle {
         EvalRunnerHandle {
             instance: Box::into_raw(Box::new(value)),
@@ -56,8 +56,9 @@ fn c_char_to_str(c_str: *const c_char) -> Result<&'static str, std::str::Utf8Err
 #[no_mangle]
 pub extern "C" fn init(
     bert_callback: extern "C" fn(input: *const c_char) -> *const FFISlice<'static, f32>,
+    llm_callback: extern "C" fn(input: *const c_char) -> *const c_char,
 ) -> EvalRunnerHandle<'static> {
-    let rust_callback = move |input: &str| -> Vec<f32> {
+    let b_callback = move |input: &str| -> Vec<f32> {
         let c_string = CString::new(input).unwrap();
         let c_str_ptr = c_string.as_ptr();
 
@@ -67,7 +68,16 @@ pub extern "C" fn init(
         slice.to_vec()
     };
 
-    EvalRunnerHandle::out_of_rust(EvalRunner::init(rust_callback))
+    let l_callback = move |input: &str| -> String {
+        let c_string = CString::new(input).unwrap();
+        let c_str_ptr = c_string.as_ptr();
+
+        let result_ptr = { llm_callback(c_str_ptr) };
+
+        unsafe { CStr::from_ptr(result_ptr).to_str().unwrap().to_owned() }
+    };
+
+    EvalRunnerHandle::out_of_rust(EvalRunner::init(b_callback, l_callback))
 }
 
 pub fn create_inventory() -> Inventory {

@@ -20,12 +20,15 @@ namespace LLMPipelineEval
 
 
         [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "init")]
-        public static extern IntPtr init(InteropDelegate_fn_pconst_i8_rval_pconst_Slicef32 bert_callback);
+        public static extern IntPtr init(InteropDelegate_fn_pconst_i8_rval_pconst_Slicef32 bert_callback, InteropDelegate_fn_pconst_i8_rval_pconst_i8 llm_callback);
 
         [DllImport(NativeLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "similarity")]
         public static extern Bool similarity(IntPtr handle, ref sbyte input, ref sbyte output, float threshold);
 
     }
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate IntPtr InteropDelegate_fn_pconst_i8_rval_pconst_i8(ref sbyte x0);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate IntPtr InteropDelegate_fn_pconst_i8_rval_pconst_Slicef32(ref sbyte x0);

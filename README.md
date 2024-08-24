@@ -16,3 +16,8 @@ Built in Rust for speed, but interop libraries to be developed for integration i
 | Evaluation | BERT | LLM | RAG |
 |----------|----------|----------|---------|
 | Similarity | ✓ | ✓ | ✓ |
+
+
+## Development Notes
+
+- Rust library was not built with async in mind, it is expected the interop libraries will handle async operations due to the differences in how languages handles threads.
